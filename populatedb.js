@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-console.log('This script populates some test drills, designs, and statuses to database.');
+console.log('This script populates some test drills, designs, and records to database.');
 
 // Get arguments passed on command line
 const userArgs = process.argv.slice(2);
@@ -8,7 +8,7 @@ const userArgs = process.argv.slice(2);
 const async = require('async')
 const Drill = require('./models/drill')
 const Design = require('./models/design')
-const Status = require('./models/status')
+const Record = require('./models/record')
 
 
 const mongoose = require('mongoose');
@@ -23,7 +23,7 @@ async function main() {
 
 const drills = [];
 const designs = [];
-const statuses = [];
+const records = [];
 
 function drillCreate(part_num, design, descr, cb){
     drillDetail = {
@@ -57,22 +57,22 @@ function designCreate(name, descr, cb){
     });
 }
 
-function statusCreate(drill, amount, location, descr, cb){
-    statusDetail = {
+function recordCreate(drill, amount, location, descr, cb){
+    recordDetail = {
         drill: drill,
         amount: amount,
         location: location,
     }
-    if(descr != false) statusDetail.descr = descr;
+    if(descr != false) recordDetail.descr = descr;
 
-    const status = new Status(statusDetail);
-    status.save(function(err){
+    const record = new Record(recordDetail);
+    record.save(function(err){
         if(err){
             cb(err, null);
             return;
         }
-        console.log('New Status: ' + status);
-        statuses.push(status);
+        console.log('New Record: ' + record);
+        records.push(record);
         cb(null, drill);
     });
 }
@@ -136,43 +136,43 @@ function createDrills(cb){
     cb);
 }
 
-function createStatuses(cb){
+function createRecords(cb){
     async.parallel([
         function(callback){
-            statusCreate(drills[0], 250, 'Warehouse', 'App28800, Lot# KN0098233N, received on 2/23/2023', callback);
+            recordCreate(drills[0], 250, 'Warehouse', 'App28800, Lot# KN0098233N, received on 2/23/2023', callback);
         },
         function(callback){
-            statusCreate(drills[0], 10000, 'Warehouse', 'send to Lemuel for evaluation', callback);
+            recordCreate(drills[0], 10000, 'Warehouse', 'send to Lemuel for evaluation', callback);
         },
         function(callback){
-            statusCreate(drills[1], 10, 'Warehouse', 'check diameter', callback);
+            recordCreate(drills[1], 10, 'Warehouse', 'check diameter', callback);
         },
         function(callback){
-            statusCreate(drills[2], 0, 'Tech Center', 'take top and side view photos', callback);
+            recordCreate(drills[2], 0, 'Tech Center', 'take top and side view photos', callback);
         },
         function(callback){
-            statusCreate(drills[3], 123, 'Warehouse', 'Lot# CN29138213N', callback);
+            recordCreate(drills[3], 123, 'Warehouse', 'Lot# CN29138213N', callback);
         },
         function(callback){
-            statusCreate(drills[3], 99, 'Tech Center', 'Used Drills from App#27900', callback);
+            recordCreate(drills[3], 99, 'Tech Center', 'Used Drills from App#27900', callback);
         },
         function(callback){
-            statusCreate(drills[3], 65, 'Warehouse', 'send to Repoint', callback);
+            recordCreate(drills[3], 65, 'Warehouse', 'send to Repoint', callback);
         },
         function(callback){
-            statusCreate(drills[4], 100, 'Warehouse', 'send to Lemuel for evaluation', callback);
+            recordCreate(drills[4], 100, 'Warehouse', 'send to Lemuel for evaluation', callback);
         },
         function(callback){
-            statusCreate(drills[5], 400, 'Tech Center', 'send to Lemuel for evaluation', callback);
+            recordCreate(drills[5], 400, 'Tech Center', 'send to Lemuel for evaluation', callback);
         },
         function(callback){
-            statusCreate(drills[6], 80, 'Tech Center', 'Repointed', callback);
+            recordCreate(drills[6], 80, 'Tech Center', 'Repointed', callback);
         },
         function(callback){
-            statusCreate(drills[7], 770, 'Warehouse', 'For customer ABC', callback);
+            recordCreate(drills[7], 770, 'Warehouse', 'For customer ABC', callback);
         },
         function(callback){
-            statusCreate(drills[7], 60, 'Tech Center', 'order more from Taiwan', callback);
+            recordCreate(drills[7], 60, 'Tech Center', 'order more from Taiwan', callback);
         },
     ], 
     // optional callback
@@ -183,7 +183,7 @@ function createStatuses(cb){
 async.series([
         createDesigns,
         createDrills,
-        createStatuses
+        createRecords
     ],
     // Optional callback
     function(err, results) {
@@ -191,7 +191,7 @@ async.series([
             console.log('FINAL ERR: ' + err);
         }
         else {
-            console.log('Statuses: ' + statuses);
+            console.log('Records: ' + records);
             
         }
         // All done, disconnect from database

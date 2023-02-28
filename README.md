@@ -1,5 +1,11 @@
 # inventory
 
+create record form
+create drill form
+
+delete record/drill/design
+update ...
+
 1. Drill
     part_num
     design --
@@ -11,7 +17,7 @@
     descr
     URL
 
-3. Instance/Status
+3. Record
     drill
     amount: total # in stock 
     location: (White Shelf, Warehouse, Office, Tech Center)

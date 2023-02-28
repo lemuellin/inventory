@@ -1,0 +1,19 @@
+extends layout 
+
+block content 
+
+    h1  #{title}
+
+    form(method='POST', action='')
+        div.form-group 
+            label(for='name') Design:
+            input#name.form-control(type='text', placeholder='UCY1, MDBT, RDX... etc' name='name' value=(undefined===design ? '' : design.name))
+        div.form-group    
+            label(for='descr') Description: 
+            input#descr.form-control(type='text', placeholder='Drill/Router/Standard/DIA/...' name='descr' value=(undefined===design ? '' : design.descr))
+        button.btn.btn-primary(type='submit') Submit
+
+    if errors 
+        ul
+            for error in errors 
+                li!=error.msg

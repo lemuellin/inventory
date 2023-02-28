@@ -1,0 +1,12 @@
+extends layout 
+
+block content 
+
+    h1=title 
+
+    ul 
+        each drill in drill_list 
+            li 
+                a(href=drill.url) #{drill.part_num}
+        else 
+            p There are no drills

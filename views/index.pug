@@ -2,4 +2,16 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+
+  if error 
+    p Error getting dynamic content 
+  else 
+    p Tech Center Inventory has the following record counts: 
+
+    ul 
+      li #[strong Drills: ] !{data.drill_count}
+      li #[strong Designs: ] !{data.design_count}
+      li #[strong Records: ] !{data.record_count}
+      li #[strong # of Rec. in Tech Center: ] !{data.record_tech_center_count}
+      li #[strong # of Rec. in Warehouse: ] !{data.record_warehouse_count}
+

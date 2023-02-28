@@ -1,0 +1,16 @@
+extends layout 
+
+block content 
+
+    h1
+        a(href=record.drill.url) #{record.drill.part_num}
+    h4 ID: #{record._id}
+
+    p #[strong Amount: #{record.amount} pcs]
+    p #[strong Location: ]
+        if record.location == 'Tech Center'
+            span.text-danger  #{record.location}
+        else if record.location == 'Warehouse'
+            span.text-success #{record.location}
+    p #[strong Note: #{record.descr}]
+

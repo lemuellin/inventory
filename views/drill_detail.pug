@@ -1,0 +1,23 @@
+extends layout 
+
+block content 
+
+    h1=title 
+    h4 #{drill.design.name} - #{drill.descr} 
+
+    div(style="margin-top: 20px;")
+        h4 Records
+
+        each val in records 
+            hr
+            if val.location == 'Tech Center'
+                p.text-danger #[strong #{val.location}]
+            else if val.location == 'Warehouse'
+                p.text-success #[strong #{val.location}]
+            p #[strong Amount: ]#{val.amount} pcs
+            p #[strong Note: ]#{val.descr}
+            p #[strong ID: ] 
+                a(href=val.url) #{val._id}
+        else 
+            p There are no existing records of this tool.
+

@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+
+    h1=title 
+
+    ul 
+        each val in record_list 
+            li 
+                a(href=val.url) #{val.drill.part_num} : #{val.amount} pcs - 
+                if val.location == 'Tech Center'
+                    span.text-danger  #{val.location}
+                else if val.location == 'Warehouse'
+                    span.text-success #{val.location}
+                
+        else 
+            p There are no existing records.

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const StatusSchema = new Schema({
+const RecordSchema = new Schema({
     drill: {type: Schema.Types.ObjectId, ref: 'Drill', required: true},
     amount: {type: Number, required: true},
     location: {
@@ -12,8 +12,8 @@ const StatusSchema = new Schema({
     descr: {type: String}
 });
 
-StatusSchema.virtual('url').get(function(){
-    return `/catalog/status/${this._id}`;
+RecordSchema.virtual('url').get(function(){
+    return `/catalog/record/${this._id}`;
 });
 
-module.exports = mongoose.model('Status', StatusSchema);
+module.exports = mongoose.model('Record', RecordSchema);

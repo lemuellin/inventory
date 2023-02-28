@@ -1,0 +1,12 @@
+extends layout 
+
+block content 
+
+    h1=title 
+
+    ul 
+        each design in design_list 
+            li 
+                a(href=design.url) #{design.name}
+        else 
+            p There are no existing designs.
