@@ -1,4 +1,8 @@
 const Record = require('../models/record');
+const Drill = require('../models/drill');
+
+const async = require('async');
+const { body, validationResult } = require('express-validator');
 
 // Display list of all records
 exports.record_list = (req, res) => {
@@ -37,13 +41,77 @@ exports.record_detail = (req, res, next) => {
 }
 
 // Create
-exports.record_create_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Record Create GET");
+exports.record_create_get = (req, res, next) => {
+    Drill.find({}, 'part_num').exec((err, drills) => {
+        if(err){
+            return next(err);
+        }
+
+        //Successful, so render
+        res.render('record_form', {
+            title: 'Create Record',
+            drill_list: drills,
+        });
+    })
 }
 
-exports.record_create_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Record Create POST");
-}
+exports.record_create_post = [
+
+    // Validate and Sanitize Data
+    body('drill', 'Part Number must not be empty.')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+    body('amount', 'Amount must be an integar, and larger than 0')
+    .trim()
+    .isLength({ min: 1 })
+    .isInt({ min:0 })
+    .escape(),
+    body('location')
+    .escape(),
+    body('descr')
+    .escape(),
+
+    // Process Request after validation and sanitization
+    (req, res, next) => {
+        // Extract the validation errors from a request
+        const errors = validationResult(req);
+
+        // Create Record with escaped and trimmed data
+        const record = new Record({
+            drill: req.body.drill,
+            amount: req.body.amount,
+            location: req.body.location,
+            descr: req.body.descr,
+        })
+
+        if(!errors.isEmpty()){
+            // There are errors, render form again with sanitized value and error msg
+            Drill.find({}, 'part_num').exec((err, drills) => {
+                if(err){
+                    return next(err);
+                }
+
+                //Successful, so render
+                res.render('record_form', {
+                    title: 'Create Record',
+                    drill_list: drills,
+                })
+            })
+            return;
+        }
+
+        // Data from form is valid
+        record.save((err) => {
+            if(err){
+                return next(err);
+            }
+
+            // Successful, so render
+            res.redirect(record.url);
+        })
+    }
+]
 
 // Delete
 exports.record_delete_get = (req, res) => {

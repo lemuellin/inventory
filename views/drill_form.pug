@@ -1,0 +1,27 @@
+extends layout 
+
+block content 
+
+    h1=title 
+
+    form(method='POST', action='')
+        div.form-group 
+            label(for='part_num') Part Number: 
+            input#part_num.form-control(type='text', placeholder='' name='part_num' value=(undefined===drill ? '' : drill.part_num) required='true')
+        div.form-group
+            label(for='design') Tool Design:
+            select#design.form-control(type='select', placeholder='Select Tool Design' name='design' required='true')
+                for design in designs 
+                    if drill 
+                        option(value=design._id selected=(design._id.toString()===drill.design._id.toString() ? 'selected' : false)) #{design.name}
+                    else 
+                        option(value=design._id) #{design.name}
+        div.form-group 
+            label(for='descr') Description:
+            textarea#descr.form-control(type='textarea', placeholder='Input Metric Parameters. (ex. 0.2 x 5.0 MM)' name='descr' value=(undefined===drill ? '': drill.descr) required='true') #{undefined === drill ? '' : drill.descr}
+        button.btn.btn-primary(type='submit') Submit
+
+    if errors
+        ul 
+            for error in errors 
+                li!=error.msg

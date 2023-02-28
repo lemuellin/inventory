@@ -4,6 +4,9 @@ const Record = require('../models/record');
 
 const async = require('async');
 
+const { body, validationResult } = require('express-validator');
+const { design_list } = require('./designController');
+
 exports.index = (req, res) => {
     async.parallel(
         {
@@ -83,13 +86,75 @@ exports.drill_detail = (req, res, next) => {
 }
 
 // Create
-exports.drill_create_get = (req,res) => {
-    res.send("NOT IMPLEMENTED: Drill Create on GET");
+exports.drill_create_get = (req, res, next) => {
+    Design.find({}, 'name').exec((err, designs) => {
+        if(err){
+            return next(err);
+        }
+
+        // Successful, so render
+        res.render('drill_form', {
+            title: 'Create Drill',
+            designs: designs,
+        });
+    })
 }
 
-exports.drill_create_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Drill Create on POST");
-}
+exports.drill_create_post = [
+
+    // Validate and Sanitize data
+    body('part_num', 'Part Number must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('design', 'Design must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    body('descr')
+        .trim()
+        .escape(),
+    
+    // Process request after validation and sanitization
+    (req, res, next) => {
+        // Extract validation errors
+        const errors = validationResult(req);
+
+        // Create Drill Objects with escaped and trimmed data
+        const drill = new Drill({
+            part_num: req.body.part_num,
+            design: req.body.design,
+            descr: req.body.descr,
+        });
+
+        if(!errors.isEmpty()){
+            // There are errors, render form again with sanitized data
+            Design.find({}, 'name').exec((err, designs) => {
+                if(err){
+                    return next(err);
+                }
+        
+                // Successful, so render
+                res.render('drill_form', {
+                    title: 'Create Drill',
+                    designs: designs,
+                    drill,
+                });
+            })
+
+        }
+
+        // Data from form is valid, save Drill
+        drill.save((err) => {
+            if(err){
+                return next(err);
+            }
+
+            // Successful, redirect
+            res.redirect(drill.url);
+        });
+    },
+];
 
 // Delete
 exports.drill_delete_get = (req, res) => {

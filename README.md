@@ -1,10 +1,10 @@
 # inventory
 
-create record form
-create drill form
-
 delete record/drill/design
-update ...
+update record/drill/design
+
+readme
+
 
 1. Drill
     part_num

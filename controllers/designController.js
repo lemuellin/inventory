@@ -56,8 +56,14 @@ exports.design_create_get = (req, res, next) => {
 // Handle Design Create on POST
 exports.design_create_post = [
     // Validate and sanitize the name field
-    body('name', 'Design name required').trim().isLength({min: 1}).escape(),
-    body('descr', 'Description required').trim().isLength({min: 1}).escape(),
+    body('name', 'Design name required')
+        .trim()
+        .isLength({min: 1})
+        .escape(),
+    body('descr', 'Description required')
+        .trim()
+        .isLength({min: 1})
+        .escape(),
 
     // Process request after validation and sanitization
     (req, res, next) => {

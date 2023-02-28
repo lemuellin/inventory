@@ -1,0 +1,29 @@
+extends layout 
+
+block content 
+
+    h1=title 
+
+    form(method='POST', action='')
+        div.form-group
+            label(for='drill') Part Number: 
+            select#drill.form-control(type='select', name='drill' require='true')
+                for drill in drill_list 
+                    option(value=drill._id) #{drill.part_num}
+        div.form-group
+            label(for='amount') Amount: 
+            input#amount.form-control(type='number', min='0' name='amount' require='true')
+        div.form-group
+            label(for='location') Location: 
+            select#location.form-control(type='select', name='location' require='true')
+                option(value='Tech Center') #{'Tech Center'}
+                option(value='Warehouse') #{'Warehouse'}
+        div.form-group
+            label(for='descr') Description:
+            textarea#descr.form-control(type='textarea', name='descr')
+        button.btn.btn-primary(type='submit') Submit
+
+    if errors
+        ul 
+            for error in errors 
+                li!=error.msg
