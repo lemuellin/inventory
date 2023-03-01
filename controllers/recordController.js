@@ -144,10 +144,93 @@ exports.record_delete_post = (req, res, next) => {
 }
 
 // Update
-exports.record_update_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Record Update GET");
+exports.record_update_get = (req, res, next) => {
+    async.parallel(
+        {
+            record(callback){
+                Record.findById(req.params.id).populate('drill').exec(callback);
+            },
+            drill(callback){
+                Drill.find(callback);
+            }
+        },
+        (err, results) => {
+            if(err){
+                return next(err);
+            }
+
+            if(results.record == null){
+                // No record
+                const err = new Error('Record not found.')
+                err.status = 404;
+                return next(err);
+            }
+
+            // Success, so render
+            res.render('record_form', {
+                title: 'Update Record',
+                record: results.record,
+                drill_list: results.drill,
+                selected_drill: results.record.drill._id,
+                selected_location: results.record.location,
+            })
+        }
+    );
 }
 
-exports.record_update_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Record Update POST");
-}
+exports.record_update_post = [
+    // Validate and Sanitize data from form
+    body('amount', 'Amount must be an integar, and larger than 0')
+    .trim()
+    .isLength({ min: 1 })
+    .isInt({ min:0 })
+    .escape(),
+    body('location')
+    .escape(),
+    body('descr')
+    .escape(),
+
+    // Process Request after validate and sanitize data
+    (req, res, next) => {
+        // Extract validation error
+        const errors = validationResult(req);
+
+        // Create a Record Object from sanitized data
+        const record = new Record({
+            drill: req.body.drill,
+            amount: req.body.amount,
+            location: req.body.location,
+            descr: req.body.descr,
+            _id: req.params.id, // This is required, or a new ID will be assigned!
+        })
+
+        if(!errors.isEmpty()){
+            // there are errors, render form again with sanitized data
+            Drill.find().exec((err, results) => {
+                if(err){
+                    return next(err);
+                }
+
+                res.render('record_form', {
+                    title: 'Update Record',
+                    record,
+                    selected_drill: results.record.drill._id,
+                    selected_location: results.record.location,
+                    drill_list: results,
+                    errors: errors.array(),
+                });
+            });
+            return;
+        }
+
+        // Data from form is valid, update the record
+        Record.findByIdAndUpdate(req.params.id, record, {}, (err, therecord) => {
+            if(err){
+                return next(err);
+            }
+
+            //Success, redirect to the detail page of record
+            res.redirect(therecord.url);
+        });
+    }
+];

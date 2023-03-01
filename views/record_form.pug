@@ -9,18 +9,18 @@ block content
             label(for='drill') Part Number: 
             select#drill.form-control(type='select', name='drill' require='true')
                 for drill in drill_list 
-                    option(value=drill._id) #{drill.part_num}
+                    option(value=drill._id selected=(selected_drill==drill._id.toString() ? 'selected' : false)) #{drill.part_num}
         div.form-group
             label(for='amount') Amount: 
-            input#amount.form-control(type='number', min='0' name='amount' require='true')
+            input#amount.form-control(type='number', min='0' name='amount' require='true' value=(undefined===record ? '' : record.amount))
         div.form-group
             label(for='location') Location: 
             select#location.form-control(type='select', name='location' require='true')
-                option(value='Tech Center') #{'Tech Center'}
-                option(value='Warehouse') #{'Warehouse'}
+                option(value='Tech Center' selected=(selected_location=='Tech Center' ? 'selected' : false)) #{'Tech Center'}
+                option(value='Warehouse' selected=(selected_location=='Warehouse' ? 'selected' : false)) #{'Warehouse'}
         div.form-group
             label(for='descr') Description:
-            textarea#descr.form-control(type='textarea', name='descr')
+            input#descr.form-control(type='text', name='descr' value=(undefined===record ? '' : record.descr))
         button.btn.btn-primary(type='submit') Submit
 
     if errors

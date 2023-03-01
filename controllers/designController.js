@@ -178,11 +178,67 @@ exports.design_delete_post = (req, res, next) => {
 }
 
 // Display Design Update form on GET
-exports.design_update_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Design update GET");
+exports.design_update_get = (req, res, next) => {
+    Design.findById(req.params.id).exec((err, design) => {
+        if(err){
+            return next(err);
+        }
+
+        if(design == null){
+            const err = new Error('Design not found.');
+            err.status = 404;
+            return next(err);
+        }
+
+        res.render('design_form', {
+            title: 'Update Design',
+            design: design,
+        });
+    })
 }
 
 // Handle Design Update on POST
-exports.design_update_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Design update POST");
-}
+exports.design_update_post = [
+    // Validate and sanitize the name field
+    body('name', 'Design name required')
+    .trim()
+    .isLength({min: 1})
+    .escape(),
+    body('descr', 'Description required')
+    .trim()
+    .isLength({min: 1})
+    .escape(),
+
+    // Process Request after sanitize and validate
+    (req, res, next) => {
+        // Extract validation error from request
+        const errors = validationResult(req);
+
+        // Create a new Design object with sanitized data
+        const design = new Design({
+            name: req.body.name,
+            descr: req.body.descr,
+            _id: req.params.id,
+        });
+
+        if(!errors.isEmpty()){
+            // there are error, render form again with sanitized data    
+            res.render('design_form', {
+                title: 'Update Design',
+                design: design,
+                errors: errors.array(),
+            });
+            return;
+        }
+
+        // data from form is valid. Update the record
+        Design.findByIdAndUpdate(req.params.id, design, {}, (err, thedesign) => {
+            if(err){
+                return next(err);
+            }
+
+            // Success, redirect
+            res.redirect(thedesign.url);
+        });
+    }
+];

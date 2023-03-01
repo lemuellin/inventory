@@ -226,10 +226,92 @@ exports.drill_delete_post = (req, res, next) => {
 }
 
 // Update
-exports.drill_update_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Drill Update on GET");
+exports.drill_update_get = (req, res, next) => {
+    // Get Drill, Design for form
+    async.parallel(
+        {
+            drill(callback){
+                Drill.findById(req.params.id)
+                .populate('design')
+                .exec(callback);
+            },
+            designs(callback){
+                Design.find(callback);
+            },
+        },
+        (err, results) => {
+            if(err){
+                return next(err)
+            }
+
+            if(results.drill == null){
+                // No Results
+                const err = new Error('Book not found');
+                err.status = 404;
+                return next(err);
+            }
+
+            // Success
+            res.render('drill_form', {
+                title: 'Update Drill',
+                drill: results.drill,
+                designs: results.designs,
+            });
+        }
+    );
 }
 
-exports.drill_update_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Drill Update on POST");
-}
+exports.drill_update_post = [
+    // Validate and Sanitize data
+    body('part_num', 'Part Number must not be empty.')
+    .trim()
+    .isLength({min:1})
+    .escape(),
+    body('design', 'Design must not be empty.')
+    .trim()
+    .isLength({min:1})
+    .escape(),
+    body('descr')
+    .trim()
+    .escape(),
+
+    // Process Request after validation and sanitization
+    (req, res, next) => {
+        // Extract validaiton error from request
+        const errors = validationResult(req);
+
+        // Create a Drill object with validated and sanitized data
+        const drill = new Drill({
+            part_num: req.body.part_num,
+            design: req.body.design,
+            descr: req.body.descr,
+            _id: req.params.id,  // This is required, or a new ID will be assigned!
+        })
+
+        if(!errors.isEmpty()){
+            // There are errors. Render form again with sanitized data 
+            Design.find().exec((err, results) => {
+                if(err){
+                    return next(err);
+                }
+                res.render('drill_form', {
+                    title: 'Update Drill',
+                    drill,
+                    design: results,
+                    errors: errors.array(),
+                });
+            });
+            return;
+        }
+
+        // Data from form is valid. Update the record
+        Drill.findByIdAndUpdate(req.params.id, drill, {}, (err, thedrill) => {
+            if(err){
+                return next(err);
+            }
+
+            //Success, redirect to the drill detail page
+            res.redirect(thedrill.url);
+        });
+    }
+];

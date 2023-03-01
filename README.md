@@ -1,6 +1,4 @@
 # inventory
-update record/drill/design
-
 readme
 
 
