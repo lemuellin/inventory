@@ -157,12 +157,72 @@ exports.drill_create_post = [
 ];
 
 // Delete
-exports.drill_delete_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Drill Delete on GET");
+exports.drill_delete_get = (req, res, next) => {
+    async.parallel(
+        {
+            drill(callback){
+                Drill.findById(req.params.id).exec(callback);
+            },
+            drill_records(callback){
+                Record.find({drill: req.params.id}).exec(callback);
+            },
+        },
+        (err, results) => {
+            if(err){
+                return next(err);
+            }
+            if(results.drill === null){
+                // No Results
+                res.redirect('/catalog/drills');
+            }
+
+            // Successful, so render
+            res.render('drill_delete', {
+                title: 'Delete Drill',
+                drill: results.drill,
+                drill_records: results.drill_records,
+            });
+        }
+    );
 }
 
-exports.drill_delete_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Drill Delete on POST");
+exports.drill_delete_post = (req, res, next) => {
+    async.parallel(
+        {
+            drill(callback){
+                Drill.findById(req.body.drillid).exec(callback);
+            },
+            drill_records(callback){
+                Record.find({drill: req.body.drillid}).exec(callback);
+            },
+        },
+        (err, results) => {
+            if(err){
+                return next(err)
+            }
+
+            // Success
+            if(results.drill_records.length > 0){
+                // Drill has Records. Render in the same way as GET route
+                res.render('drill_delete', {
+                    title: 'Delete Drill',
+                    drill: results.drill,
+                    drill_records: results.drill_records,
+                });
+                return;
+            }
+
+            // Drill has no Record related. Delete object, return the list of drills
+            Drill.findByIdAndRemove(req.body.drillid, (err) => {
+                if(err){
+                    return next(err);
+                }
+
+                //Success, redirect
+                res.redirect('/catalog/drills');
+            });
+        }
+    );
 }
 
 // Update

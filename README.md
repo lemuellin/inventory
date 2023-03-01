@@ -1,6 +1,4 @@
 # inventory
-
-delete record/drill/design
 update record/drill/design
 
 readme

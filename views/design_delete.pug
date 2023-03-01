@@ -1,0 +1,25 @@
+extends layout 
+
+block content 
+
+    h1 #{title} : #{design.name}
+
+    if design_drills.length
+        p #[strong Delete the following drills before attempting to delete this design.]
+
+        div(style='margin-left:20px;margin-top:20px')
+            h4 Drills
+            dl
+            each drill in design_drills
+                dt
+                    a(href=drill.url) #{drill.part_num}
+                dd #{drill.descr}
+    
+    else 
+        p Do you really want to delete this Design?
+
+        form(method='POST' action='')
+            div.form-group
+            input#designid.form-control(type='hidden',name='designid', required='true', value=design._id )
+
+            button.btn.btn-primary(type='submit') Delete

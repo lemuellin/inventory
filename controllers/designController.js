@@ -108,13 +108,73 @@ exports.design_create_post = [
 ]
 
 // Display Design Delete form on GET
-exports.design_delete_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Design Delete GET");
+exports.design_delete_get = (req, res, next) => {
+    async.parallel(
+        {
+            design(callback){
+                Design.findById(req.params.id).exec(callback);
+            },
+            design_drills(callback){
+                Drill.find({ design: req.params.id }).exec(callback);
+            },
+        },
+        (err, results) => {
+            if(err){
+                return next(err);
+            }
+            if(results.design === null){
+                // No Results
+                res.redirect('/catalog/designs');
+            }
+
+            //Successful, so render
+            res.render('design_delete', {
+                title: 'Delete Design',
+                design: results.design,
+                design_drills: results.design_drills,
+            });
+        }
+    );
 }
 
 // Handle Design Delete on POST
-exports.design_delete_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Design Delete POST");
+exports.design_delete_post = (req, res, next) => {
+    async.parallel(
+        {
+            design(callback){
+                Design.findById(req.body.designid).exec(callback);
+            },
+            design_drills(callback){
+                Drill.find({design: req.body.designid}).exec(callback);
+            },
+        },
+        (err, results) => {
+            if(err){
+                return next(err);
+            }
+
+            //Success
+            if(results.design_drills.length > 0){
+                // Design has Drills. Render in the same way as GET route
+                res.render('design_delete',{
+                    title: 'Delete Design',
+                    design: results.design,
+                    design_drills: results.design_drills,
+                });
+                return;
+            }
+
+            // Design has no Drills related, Delete object and return the list of designs
+            Design.findByIdAndRemove(req.body.designid, (err) => {
+                if(err){
+                    return next(err);
+                }
+
+                // Success, go to Design List
+                res.redirect('/catalog/designs');
+            })
+        }
+    );
 }
 
 // Display Design Update form on GET

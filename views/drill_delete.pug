@@ -1,0 +1,25 @@
+extends layout 
+
+block content 
+
+    h1 #{title} : #{drill.part_num}
+
+    if drill_records.length 
+        p #[strong Delete the following records before attempting to delete this drill.]
+
+        div(style='margin-left:20px;margin-top:20px')
+            h4 Records
+            dl
+            each record in drill_records
+                dt
+                    a(href=record.url) #{record.amount} pcs in #{record.location}
+                dd #{record.descr}
+    
+    else 
+        p Do you really want to delete this Drill?
+
+        form(method='POST' action='')
+            div.form-group
+            input#drillid.form-control(type='hidden',name='drillid', required='true', value=drill._id )
+
+            button.btn.btn-primary(type='submit') Delete

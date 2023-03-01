@@ -114,12 +114,33 @@ exports.record_create_post = [
 ]
 
 // Delete
-exports.record_delete_get = (req, res) => {
-    res.send("NOT IMPLEMENTED: Record Delete GET");
+exports.record_delete_get = (req, res, next) => {
+    Record.findById(req.params.id).exec((err, results) => {
+        if(err){
+            return next(err);
+        }
+
+        if(results === null){
+            // No Results
+            res.redirect('/catalog/records');
+        }
+
+        res.render('record_delete', {
+            title: 'Delete Record',
+            record: results,
+        });
+    })
 }
 
-exports.record_delete_post = (req, res) => {
-    res.send("NOT IMPLEMENTED: Record Delete POST");
+exports.record_delete_post = (req, res, next) => {
+    Record.findByIdAndRemove(req.body.recordid, (err) => {
+        if(err){
+            return next(err);
+        }
+
+        // Success, redirect to list of records
+        res.redirect('/catalog/records');
+    });
 }
 
 // Update
