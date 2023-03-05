@@ -12,22 +12,22 @@ An inventory app that manages products for my current drill company.
 - Users are allowed to perform CRUD on all data in the following three Models: Drill, Designs, Record.
 
 1. Drill
-    This is the main product of the company, it has 3 fields:
-        Part Number
-        Design : the 2nd Model
-        Description
+    - This is the main product of the company, it has 3 fields:
+        - Part Number
+        - Design : the 2nd Model
+        - Description
 
 2. Design
-    This is the design of the tool. Each tool has only 1 design. This category contains 2 fields:
-        Design Name
-        Description
+    - This is the design of the tool. Each tool has only 1 design. This category contains 2 fields:
+        - Design Name
+        - Description
 
 3. Record
-    This is the record of each batch of drills, it includes 4 fields:
-        Drill: related to the 1st Model
-        Amount of drills in stock
-        Location: (White Shelf, Warehouse, Office, Tech Center)
-        Description: (App#, Lot#, Date, Used? / Repointed? ...)
+    - This is the record of each batch of drills, it includes 4 fields:
+        - Drill: related to the 1st Model
+        - Amount of drills in stock
+        - Location: (White Shelf, Warehouse, Office, Tech Center)
+        - Description: (App#, Lot#, Date, Used? / Repointed? ...)
 
 # Technologies
 - Express
