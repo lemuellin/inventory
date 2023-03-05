@@ -2,7 +2,7 @@
 An inventory app that manages products for my current drill company.
 [Live Demo](tct-tc-inventory.up.railway.app) :point_left:
 
-<img src="../public/images/demo.gif">
+<img src="/public/images/demo.gif">
 
 # Features
 - Utilized MVC pattern alongside Pug templates, MongoDB schemas, and route controllers
@@ -36,10 +36,6 @@ An inventory app that manages products for my current drill company.
 - Mongoose
 - Bootstrap
 - Pug
-
-lemuellin tct
-
-mongodb+srv://lemuellin:tct@cluster0.iynpygp.mongodb.net/inventory_dev?retryWrites=true&w=majority
 
 ## Getting Started
 ##### Install and Run
