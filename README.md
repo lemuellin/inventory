@@ -1,6 +1,6 @@
 # Inventory App
 An inventory app that manages products for my current drill company.
-[Live Demo](tct-tc-inventory.up.railway.app) :point_left:
+[Live Demo](http://tct-tc-inventory.up.railway.app) :point_left:
 
 <img src="/public/images/demo.gif">
 
