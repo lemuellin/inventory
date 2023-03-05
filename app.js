@@ -1,3 +1,6 @@
+require('dotenv').config();
+console.log(process.env);
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -20,8 +23,7 @@ const mongoose = require("mongoose");
 mongoose.set('strictQuery', false);
 
 // Set up mongoose connection
-const dev_db_url = "mongodb+srv://lemuellin:tct@cluster0.iynpygp.mongodb.net/inventory_dev?retryWrites=true&w=majority";
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = process.env.MONGODB_URI || process.env.DEV_DB_URL;
 
 main().catch(err => console.log(err));
 async function main() {
