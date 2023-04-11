@@ -44,4 +44,4 @@ git clone https://git@github.com:lemuellin/inventory.git
 cd inventory
 npm install
 npm start
-```
+``` 
