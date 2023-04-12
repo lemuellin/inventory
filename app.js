@@ -25,8 +25,6 @@ mongoose.set('strictQuery', false);
 // Set up mongoose connection
 const mongoDB = process.env.MONGODB_URI || process.env.DEV_DB_URL;
 
-console.log(process.env.MONGODB_URI);
-
 main().catch(err => console.log(err));
 async function main() {
   await mongoose.connect(mongoDB);
